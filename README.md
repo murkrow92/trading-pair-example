@@ -16,14 +16,17 @@ A React Native cryptocurrency tracking app built with Expo, following Android ar
 This app follows the recommended Android app architecture with clear separation of concerns:
 
 ### Data Layer
+
 - `src/services/` - API services for data fetching
 - `src/types/` - Type definitions and data models
 
 ### Domain Layer
+
 - `src/contexts/` - State management and business logic
 - `src/utils/` - Utility functions and formatters
 
 ### UI Layer
+
 - `src/screens/` - Screen components
 - `src/components/` - Reusable UI components
 - `src/navigation/` - Navigation setup
@@ -51,6 +54,7 @@ This app follows the recommended Android app architecture with clear separation 
 
 1. Clone the repository
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
@@ -90,21 +94,25 @@ src/
 ## Key Features Implementation
 
 ### 1. Clean Architecture
+
 - **Data Layer**: API services handle data fetching
 - **Domain Layer**: Context provides state management and business logic
 - **UI Layer**: Components and screens handle presentation
 
 ### 2. State Management
+
 - Uses React Context and useReducer for predictable state updates
 - Centralized state management for cryptocurrencies and favorites
 - Error handling and loading states
 
 ### 3. API Integration
+
 - CoinGecko API for real-time cryptocurrency data
 - Error handling and retry mechanisms
 - Type-safe API responses
 
 ### 4. Modern UI/UX
+
 - Material Design principles
 - Responsive design for different screen sizes
 - Smooth animations and transitions

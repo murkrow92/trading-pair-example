@@ -1,132 +1,160 @@
-// Domain layer - State management and business logic
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { CryptoCurrency, ApiResponse } from '../types';
-import { cryptoService } from '../services/cryptoService';
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useReducer,
+  ReactNode,
+  useEffect,
+  useState,
+} from 'react';
+import { CurrencyList } from '../types';
+import { CURRENCY_LIST_A_CRYPTO, CURRENCY_LIST_B_FIAT } from '../mock/currencies';
+import { initDb, clearAll, insertList, getByList, getPurchasableFromAandB } from '../db/currencyDb';
+import { matchesSearch } from '../utils/search';
 
-interface CryptoState {
-  cryptocurrencies: ApiResponse<CryptoCurrency[]>;
-  favorites: string[];
+type Mode = 'A' | 'B' | 'ALL';
+
+interface CurrencyState {
+  mode: Mode;
+  query: string;
+  isSearching: boolean;
+  loading: boolean;
+  items: CurrencyList;
 }
 
-type CryptoAction =
-  | { type: 'FETCH_CRYPTOS_START' }
-  | { type: 'FETCH_CRYPTOS_SUCCESS'; payload: CryptoCurrency[] }
-  | { type: 'FETCH_CRYPTOS_ERROR'; payload: string }
-  | { type: 'TOGGLE_FAVORITE'; payload: string }
-  | { type: 'SET_FAVORITES'; payload: string[] };
+type Action =
+  | { type: 'SET_MODE'; payload: Mode }
+  | { type: 'SET_QUERY'; payload: string }
+  | { type: 'CLEAR_QUERY' }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ITEMS'; payload: CurrencyList };
 
-const initialState: CryptoState = {
-  cryptocurrencies: {
-    data: [],
-    loading: false,
-  },
-  favorites: [],
+const initialState: CurrencyState = {
+  mode: 'ALL',
+  query: '',
+  isSearching: false,
+  loading: false,
+  items: [],
 };
 
-function cryptoReducer(state: CryptoState, action: CryptoAction): CryptoState {
+function reducer(state: CurrencyState, action: Action): CurrencyState {
   switch (action.type) {
-    case 'FETCH_CRYPTOS_START':
-      return {
-        ...state,
-        cryptocurrencies: {
-          ...state.cryptocurrencies,
-          loading: true,
-          error: undefined,
-        },
-      };
-    case 'FETCH_CRYPTOS_SUCCESS':
-      return {
-        ...state,
-        cryptocurrencies: {
-          data: action.payload,
-          loading: false,
-        },
-      };
-    case 'FETCH_CRYPTOS_ERROR':
-      return {
-        ...state,
-        cryptocurrencies: {
-          ...state.cryptocurrencies,
-          loading: false,
-          error: action.payload,
-        },
-      };
-    case 'TOGGLE_FAVORITE':
-      const isFavorite = state.favorites.includes(action.payload);
-      const newFavorites = isFavorite
-        ? state.favorites.filter(id => id !== action.payload)
-        : [...state.favorites, action.payload];
-      
-      // Save to AsyncStorage (you can implement this later)
-      return {
-        ...state,
-        favorites: newFavorites,
-      };
-    case 'SET_FAVORITES':
-      return {
-        ...state,
-        favorites: action.payload,
-      };
+    case 'SET_MODE':
+      return { ...state, mode: action.payload };
+    case 'SET_QUERY':
+      return { ...state, query: action.payload, isSearching: action.payload.length > 0 };
+    case 'CLEAR_QUERY':
+      return { ...state, query: '', isSearching: false };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_ITEMS':
+      return { ...state, items: action.payload };
     default:
       return state;
   }
 }
 
-interface CryptoContextType {
-  state: CryptoState;
-  fetchCryptocurrencies: () => Promise<void>;
-  toggleFavorite: (id: string) => void;
-  isFavorite: (id: string) => boolean;
+interface CurrencyContextType {
+  state: CurrencyState;
+  setModeA: () => void;
+  setModeB: () => void;
+  setModeAll: () => void;
+  setQuery: (q: string) => void;
+  clearQuery: () => void;
+  getFilteredList: () => CurrencyList;
+  insertMockA: () => Promise<void>;
+  insertMockB: () => Promise<void>;
+  clearDatabase: () => Promise<void>;
 }
 
-const CryptoContext = createContext<CryptoContextType | undefined>(undefined);
+const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
-export function CryptoProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cryptoReducer, initialState);
+export function CurrencyProvider({ children }: { children: ReactNode }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [initialized, setInitialized] = useState(false);
 
-  const fetchCryptocurrencies = async () => {
-    dispatch({ type: 'FETCH_CRYPTOS_START' });
+  useEffect(() => {
+    (async () => {
+      await initDb();
+      setInitialized(true);
+      await loadForMode(state.mode);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!initialized) return;
+    loadForMode(state.mode);
+  }, [state.mode, initialized]);
+
+  async function loadForMode(mode: Mode) {
+    dispatch({ type: 'SET_LOADING', payload: true });
     try {
-      const data = await cryptoService.getTopCryptocurrencies();
-      dispatch({ type: 'FETCH_CRYPTOS_SUCCESS', payload: data });
-    } catch (error) {
-      dispatch({ 
-        type: 'FETCH_CRYPTOS_ERROR', 
-        payload: error instanceof Error ? error.message : 'Unknown error' 
-      });
+      let list: CurrencyList;
+      if (mode === 'A') list = await getByList('A');
+      else if (mode === 'B') list = await getByList('B');
+      else list = await getPurchasableFromAandB();
+      dispatch({ type: 'SET_ITEMS', payload: list });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  }
+
+  const insertMockA = async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      await insertList('A', CURRENCY_LIST_A_CRYPTO);
+      await loadForMode(state.mode);
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
-  const toggleFavorite = (id: string) => {
-    dispatch({ type: 'TOGGLE_FAVORITE', payload: id });
+  const insertMockB = async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      await insertList('B', CURRENCY_LIST_B_FIAT);
+      await loadForMode(state.mode);
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
-  const isFavorite = (id: string) => {
-    return state.favorites.includes(id);
+  const clearDatabase = async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      await clearAll();
+      dispatch({ type: 'SET_ITEMS', payload: [] });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
-  useEffect(() => {
-    fetchCryptocurrencies();
-  }, []);
+  const setModeA = () => dispatch({ type: 'SET_MODE', payload: 'A' });
+  const setModeB = () => dispatch({ type: 'SET_MODE', payload: 'B' });
+  const setModeAll = () => dispatch({ type: 'SET_MODE', payload: 'ALL' });
 
-  const value: CryptoContextType = {
-    state,
-    fetchCryptocurrencies,
-    toggleFavorite,
-    isFavorite,
-  };
-
-  return (
-    <CryptoContext.Provider value={value}>
-      {children}
-    </CryptoContext.Provider>
+  const value: CurrencyContextType = useMemo(
+    () => ({
+      state,
+      setModeA,
+      setModeB,
+      setModeAll,
+      setQuery: (q: string) => dispatch({ type: 'SET_QUERY', payload: q }),
+      clearQuery: () => dispatch({ type: 'CLEAR_QUERY' }),
+      getFilteredList: () => state.items.filter((x) => matchesSearch(state.query, x)),
+      insertMockA,
+      insertMockB,
+      clearDatabase,
+    }),
+    [state],
   );
+
+  return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>;
 }
 
-export function useCrypto() {
-  const context = useContext(CryptoContext);
-  if (context === undefined) {
-    throw new Error('useCrypto must be used within a CryptoProvider');
-  }
-  return context;
+export function useCurrency() {
+  const ctx = useContext(CurrencyContext);
+  if (!ctx) throw new Error('useCurrency must be used within CurrencyProvider');
+  return ctx;
 }

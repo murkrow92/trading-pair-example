@@ -1,22 +1,15 @@
 // Data models and type definitions
-export interface CryptoCurrency {
-  id: string;
-  symbol: string;
-  name: string;
-  current_price: number;
-  market_cap: number;
-  market_cap_rank: number;
-  total_volume: number;
-  price_change_percentage_24h: number;
-  price_change_percentage_7d?: number;
-  image: string;
-  last_updated: string;
+export interface CurrencyInfo {
+  id: string; // db primary key from server
+  name: string; // display name of the currency
+  symbol: string; // display symbol
+  code?: string; // fiat currency code, ISO 4217
 }
 
-export interface CryptoPriceHistory {
-  prices: [number, number][];
-  market_caps: [number, number][];
-  total_volumes: [number, number][];
+export type CurrencyList = CurrencyInfo[];
+
+export interface SearchQuery {
+  term: string;
 }
 
 export interface ApiResponse<T> {
@@ -25,13 +18,6 @@ export interface ApiResponse<T> {
   loading: boolean;
 }
 
-export interface NavigationProps {
-  navigation: any;
-  route: any;
-}
-
 export type RootStackParamList = {
-  Home: undefined;
-  Details: { crypto: CryptoCurrency };
-  Favorites: undefined;
+  Demo: undefined;
 };
