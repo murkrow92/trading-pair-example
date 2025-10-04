@@ -5,9 +5,9 @@ export function normalize(input: string): string {
 }
 
 
-export function matchesSearch(term: string, item: CurrencyInfo): boolean {
-  if (!term) return true;
-  const q = normalize(term);
+export function matchesSearch(item: CurrencyInfo, query: string): boolean {
+  if (!query) return true;
+  const q = normalize(query);
   const name = normalize(item.name);
   const symbol = normalize(item.symbol);
   if (name.startsWith(q)) return true;

@@ -9,7 +9,14 @@ import React, {
 } from 'react';
 import { CurrencyList } from '../types';
 import { CURRENCY_LIST_A_CRYPTO, CURRENCY_LIST_B_FIAT } from '../mock/currencies';
-import { initDb, clearAll, insertList, getByList, getPurchasableFromAandB, recreateTable } from '../db/currencyDb';
+import {
+  initDb,
+  clearAll,
+  insertList,
+  getByList,
+  getPurchasableFromAandB,
+  recreateTable,
+} from '../db/currencyDb';
 import { matchesSearch } from '../utils/search';
 
 type Mode = 'A' | 'B' | 'ALL';
@@ -79,7 +86,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       setInitialized(true);
       await loadForMode(state.mode);
     })();
-    
   }, []);
 
   useEffect(() => {
@@ -151,7 +157,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       setModeAll,
       setQuery: (q: string) => dispatch({ type: 'SET_QUERY', payload: q }),
       clearQuery: () => dispatch({ type: 'CLEAR_QUERY' }),
-      getFilteredList: () => state.items.filter((x) => matchesSearch(state.query, x)),
+      getFilteredList: () => state.items.filter((x) => matchesSearch(x, state.query)),
       insertMockA,
       insertMockB,
       clearDatabase,

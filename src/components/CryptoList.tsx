@@ -25,24 +25,18 @@ interface CryptoListProps {
 export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress, onBackPress }) => {
   const { colors } = useTheme();
   const { t } = useI18n();
-  const { 
-    data: cryptocurrencies, 
-    isLoading, 
-    error, 
+  const {
+    data: cryptocurrencies,
+    isLoading,
+    error,
     refetch,
-    isRefetching 
+    isRefetching,
   } = useTopCryptocurrencies(50);
-  
-  const { 
-    favorites, 
-    toggleFavorite, 
-    isFavorite,
-    getFilteredList 
-  } = useCurrencyStore();
+
+  const { favorites, toggleFavorite, isFavorite, getFilteredList } = useCurrencyStore();
 
   const [refreshing, setRefreshing] = useState(false);
 
-  
   useEffect(() => {
     if (cryptocurrencies) {
       useCurrencyStore.getState().setItems(cryptocurrencies);
@@ -67,12 +61,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress, onBackPress
   };
 
   const renderItem = ({ item }: { item: CurrencyInfo }) => (
-    <CurrencyItem 
-      item={item} 
-      onPress={handleItemPress}
-      showChevron={false}
-      showFavorite={true}
-    />
+    <CurrencyItem item={item} onPress={handleItemPress} showChevron={false} showFavorite={true} />
   );
 
   const EmptyComponent = () => (
@@ -129,11 +118,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress, onBackPress
       <View style={[styles.header, { backgroundColor: colors.surfaceSecondary }]}>
         <View style={styles.headerContent}>
           {onBackPress && (
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={onBackPress}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.backButton} onPress={onBackPress} activeOpacity={0.7}>
               <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           )}
@@ -141,7 +126,10 @@ export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress, onBackPress
             <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>
               {t('crypto.topCryptocurrencies')}
             </Text>
-            <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]} numberOfLines={1}>
+            <Text
+              style={[styles.headerSubtitle, { color: colors.textSecondary }]}
+              numberOfLines={1}
+            >
               {t('crypto.currenciesCount', { count: data.length })}
             </Text>
           </View>

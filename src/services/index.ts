@@ -36,9 +36,9 @@ export class SearchService {
   }
 
   static matchesSearch(term: string, item: CurrencyInfo): boolean {
-    if (!term) return true;
+    if (!term || !term.trim()) return true;
     
-    const q = this.normalize(term);
+    const q = this.normalize(term.trim());
     const name = this.normalize(item.name);
     const symbol = this.normalize(item.symbol);
     
@@ -50,7 +50,8 @@ export class SearchService {
   }
 
   static filterCurrencies(currencies: CurrencyList, query: string): CurrencyList {
-    if (!query) return currencies;
+    if (!query || !query.trim()) return currencies;
+    if (!currencies) return [];
     
     return currencies.filter(currency => 
       this.matchesSearch(query, currency)

@@ -66,11 +66,9 @@ export async function recreateTable(): Promise<void> {
 export async function insertList(listName: 'A' | 'B', items: CurrencyList): Promise<void> {
   const db = getDb();
   await initDb();
-  console.log(`Inserting ${items.length} items into list ${listName}`);
   
   await db.withTransactionAsync(async () => {
     for (const item of items) {
-      console.log(`Inserting item: ${item.id} - ${item.name}`);
       await db.runAsync(
         `INSERT OR REPLACE INTO ${TABLE}(id,name,symbol,code,image_url,price,change_24h,market_cap,list) VALUES (?,?,?,?,?,?,?,?,?)`,
         [
@@ -87,20 +85,16 @@ export async function insertList(listName: 'A' | 'B', items: CurrencyList): Prom
       );
     }
   });
-  console.log(`Successfully inserted ${items.length} items into list ${listName}`);
 }
 
 export async function getByList(listName: 'A' | 'B'): Promise<CurrencyList> {
   const db = getDb();
   await initDb();
-  console.log(`Getting items for list ${listName}`);
   
   const rows = await db.getAllAsync(
     `SELECT id,name,symbol,code,image_url,price,change_24h,market_cap FROM ${TABLE} WHERE list = ? ORDER BY name ASC`,
     [listName],
   ) as CurrencyRow[];
-  
-  console.log(`Found ${rows.length} items for list ${listName}`);
   
   const result = rows.map((row: CurrencyRow) => ({
     id: row.id,
@@ -113,7 +107,6 @@ export async function getByList(listName: 'A' | 'B'): Promise<CurrencyList> {
     marketCap: row.market_cap ?? undefined,
   }));
   
-  console.log('Mapped result:', result.slice(0, 3)); // Log first 3 items
   return result;
 }
 
