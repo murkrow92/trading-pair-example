@@ -15,12 +15,23 @@ interface CoinGeckoCoin {
   market_cap: number;
 }
 
-interface CoinGeckoResponse {
-  data: CoinGeckoCoin[];
+interface CoinGeckoSearchCoin {
+  id: string;
+  name: string;
+  symbol: string;
+  market_cap_rank: number;
 }
 
+interface CoinGeckoSearchResponse {
+  coins: CoinGeckoSearchCoin[];
+}
 
-const cache = new Map<string, { data: any; timestamp: number }>();
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const cache = new Map<string, CacheEntry<CurrencyInfo[] | CurrencyInfo>>();
 const CACHE_DURATION = 5 * 60 * 1000; 
 
 
@@ -56,7 +67,7 @@ export class CryptoApiService {
     const cached = cache.get(cacheKey);
     
     if (cached && isCacheValid(cached.timestamp)) {
-      return cached.data;
+      return cached.data as CurrencyInfo[];
     }
 
     try {
@@ -95,7 +106,7 @@ export class CryptoApiService {
     const cached = cache.get(cacheKey);
     
     if (cached && isCacheValid(cached.timestamp)) {
-      return cached.data;
+      return cached.data as CurrencyInfo;
     }
 
     try {
@@ -140,7 +151,7 @@ export class CryptoApiService {
     const cached = cache.get(cacheKey);
     
     if (cached && isCacheValid(cached.timestamp)) {
-      return cached.data;
+      return cached.data as CurrencyInfo[];
     }
 
     try {
@@ -153,9 +164,10 @@ export class CryptoApiService {
         }
       );
 
-      const coinIds = response.data.coins
+      const searchResponse = response.data as CoinGeckoSearchResponse;
+      const coinIds = searchResponse.coins
         .slice(0, 20)
-        .map((coin: any) => coin.id)
+        .map((coin: CoinGeckoSearchCoin) => coin.id)
         .join(',');
 
       if (!coinIds) {

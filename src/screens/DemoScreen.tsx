@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useCurrency } from '../contexts/CryptoContext';
 import { CurrencyItem } from '../components/CurrencyItem';
@@ -8,37 +8,40 @@ import { CurrencyList } from '../components/CurrencyList';
 import { CryptoList } from '../components/CryptoList';
 import { useTheme } from '../theme/ThemeProvider';
 import { useCurrencyStore } from '../store/currencyStore';
+import { useI18n } from '../hooks/useI18n';
 
 export const DemoScreen: React.FC = () => {
   const { state, setModeA, setModeB, setModeAll, setQuery, clearQuery, getFilteredList, insertMockA, insertMockB, clearDatabase } = useCurrency();
   const { colors } = useTheme();
-  const { mode, setMode } = useCurrencyStore();
+  const { mode, setMode, favorites, getFavorites } = useCurrencyStore();
+  const { t, changeLanguage, getCurrentLanguage } = useI18n();
 
   const [showSearch, setShowSearch] = useState<boolean>(false);
   const [showApiData, setShowApiData] = useState<boolean>(false);
+  const [showFavorites, setShowFavorites] = useState<boolean>(false);
   const filtered = getFilteredList();
 
   const ListHeader = () => (
     <>
       <View style={styles.header}>
-        <Text style={[styles.heading, { color: colors.textPrimary }]}>Crypto App</Text>
+        <Text style={[styles.heading, { color: colors.textPrimary }]}>{t('app.title')}</Text>
         <Text style={[styles.subheading, { color: colors.textSecondary }]}>
-          Demo with Dark Theme, API Integration & State Management
+          {t('app.subtitle')}
         </Text>
       </View>
 
       <View style={styles.controls}>
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Data Source</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t('dataSource.title')}</Text>
           <View style={styles.row}>
             <CustomButton 
-              label="Mock Data" 
+              label={t('dataSource.mockData')} 
               icon="server-outline" 
               variant={!showApiData ? "primary" : "ghost"} 
               onPress={() => setShowApiData(false)} 
             />
             <CustomButton 
-              label="Live API" 
+              label={t('dataSource.liveApi')} 
               icon="globe-outline" 
               variant={showApiData ? "primary" : "ghost"} 
               onPress={() => setShowApiData(true)} 
@@ -49,52 +52,85 @@ export const DemoScreen: React.FC = () => {
         {!showApiData && (
           <>
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Database Controls</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t('database.title')}</Text>
               <View style={styles.row}>
-                <CustomButton label="Clear DB" icon="trash-outline" variant="ghost" onPress={clearDatabase} />
+                <CustomButton label={t('database.clearDb')} icon="trash-outline" variant="ghost" onPress={clearDatabase} />
                 <CustomButton 
-                  label="Insert Data" 
+                  label={t('database.insertData')} 
                   icon="download-outline" 
                   variant="primary" 
-                  onPress={async () => { await insertMockA(); await insertMockB(); }} 
+                  onPress={async () => { 
+                    try {
+                      console.log('Starting data insertion...');
+                      await insertMockA(); 
+                      await insertMockB();
+                      console.log('Data insertion completed');
+                    } catch (error) {
+                      console.error('Error inserting data:', error);
+                    }
+                  }} 
                 />
               </View>
             </View>
 
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Data Mode</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t('dataMode.title')}</Text>
               <View style={styles.row}>
                 <CustomButton 
-                  label="Crypto (A)" 
+                  label={t('dataMode.crypto')} 
                   icon="logo-bitcoin" 
                   variant={mode === 'A' ? "primary" : "ghost"} 
-                  onPress={() => { setModeA(); setMode('A'); }} 
+                  onPress={() => { setModeA(); setMode('A'); setShowFavorites(false); }} 
                 />
                 <CustomButton 
-                  label="Fiat (B)" 
+                  label={t('dataMode.fiat')} 
                   icon="cash-outline" 
                   variant={mode === 'B' ? "primary" : "ghost"} 
-                  onPress={() => { setModeB(); setMode('B'); }} 
+                  onPress={() => { setModeB(); setMode('B'); setShowFavorites(false); }} 
                 />
               </View>
               <View style={styles.row}>
                 <CustomButton 
-                  label="All (A+B)" 
+                  label={t('dataMode.all')} 
                   icon="cart-outline" 
                   variant={mode === 'ALL' ? "primary" : "ghost"} 
-                  onPress={() => { setModeAll(); setMode('ALL'); }} 
+                  onPress={() => { setModeAll(); setMode('ALL'); setShowFavorites(false); }} 
+                />
+                <CustomButton 
+                  label={t('dataMode.favorites')} 
+                  icon="heart-outline" 
+                  variant={showFavorites ? "primary" : "ghost"} 
+                  onPress={() => { setShowFavorites(true); }} 
                 />
               </View>
             </View>
           </>
         )}
+        
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Language</Text>
+          <View style={styles.row}>
+            <CustomButton 
+              label="English" 
+              icon="globe-outline" 
+              variant={getCurrentLanguage() === 'en' ? "primary" : "ghost"} 
+              onPress={() => changeLanguage('en')} 
+            />
+            <CustomButton 
+              label="Tiếng Việt" 
+              icon="globe-outline" 
+              variant={getCurrentLanguage() === 'vi' ? "primary" : "ghost"} 
+              onPress={() => changeLanguage('vi')} 
+            />
+          </View>
+        </View>
       </View>
 
       {state.loading && (
         <View style={styles.loading}>
           <ActivityIndicator size="small" color={colors.iconPrimary} />
           <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-            Loading data...
+            {t('loading.text')}
           </Text>
         </View>
       )}
@@ -102,7 +138,7 @@ export const DemoScreen: React.FC = () => {
   );
 
   if (showApiData) {
-    return <CryptoList />;
+    return <CryptoList onBackPress={() => setShowApiData(false)} />;
   }
 
   if (showSearch) {
@@ -119,28 +155,55 @@ export const DemoScreen: React.FC = () => {
     );
   }
 
+  if (showFavorites) {
+    const favoriteItems = getFavorites();
+    
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <FlatList
+          data={favoriteItems}
+          keyExtractor={(i) => i.id}
+          renderItem={({ item }) => <CurrencyItem item={item} showFavorite={true} showChevron={false} />}
+          ListHeaderComponent={<ListHeader />}
+          ItemSeparatorComponent={() => <View style={[styles.sep, { backgroundColor: colors.separator }]} />}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="heart-outline" size={48} color={colors.textTertiary} />
+              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+                {t('empty.noFavorites')}
+              </Text>
+              <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
+                {t('empty.addFavoritesHint')}
+              </Text>
+            </View>
+          }
+        />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={state.items}
         keyExtractor={(i) => i.id}
-        renderItem={({ item }) => <CurrencyItem item={item} />}
+          renderItem={({ item }) => <CurrencyItem item={item} showFavorite={true} />}
         ListHeaderComponent={<ListHeader />}
         ItemSeparatorComponent={() => <View style={[styles.sep, { backgroundColor: colors.separator }]} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="search-outline" size={48} color={colors.textTertiary} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              Tap "Insert Data" to load currencies
+              {t('empty.insertDataHint')}
             </Text>
-            <View style={[styles.searchTrigger, { backgroundColor: colors.surfaceSecondary }]}>
-              <Text 
-                style={[styles.searchTriggerText, { color: colors.textTertiary }]} 
-                onPress={() => setShowSearch(true)}
-              >
-                Tap to search
+            <TouchableOpacity 
+              style={[styles.searchTrigger, { backgroundColor: colors.surfaceSecondary }]}
+              onPress={() => setShowSearch(true)}
+            >
+              <Text style={[styles.searchTriggerText, { color: colors.textTertiary }]}>
+                {t('search.tapToSearch')}
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
         }
       />
@@ -171,6 +234,11 @@ const styles = StyleSheet.create({
     marginBottom: 20, 
     textAlign: 'center',
     fontSize: 16 
+  },
+  emptySubtext: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
   },
   searchTrigger: {
     paddingHorizontal: 16,

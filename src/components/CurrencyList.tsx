@@ -9,10 +9,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  SafeAreaView,
 } from 'react-native';
 import { CurrencyInfo } from '../types';
 import { CurrencyItem } from './CurrencyItem';
 import { useTheme } from '../theme/ThemeProvider';
+import { useI18n } from '../hooks/useI18n';
 
 interface Props {
   items: CurrencyInfo[];
@@ -30,21 +32,22 @@ export const CurrencyList: React.FC<Props> = ({
   onItemPress,
 }) => {
   const { colors } = useTheme();
+  const { t } = useI18n();
   
   const renderItem = ({ item }: { item: CurrencyInfo }) => (
-    <CurrencyItem item={item} onPress={onItemPress} />
+    <CurrencyItem item={item} onPress={onItemPress} showFavorite={true} />
   );
 
   const Empty = () => (
     <View style={styles.empty}>
-      <Ionicons name="document-outline" size={64} color={colors.textTertiary} />
-      <Text style={[styles.emptyTitle, { color: colors.textSecondary }]}>No Results</Text>
-      <Text style={[styles.emptySub, { color: colors.textTertiary }]}>Try "BTC" or "ETH"</Text>
+      <Ionicons name="search-outline" size={64} color={colors.textTertiary} />
+      <Text style={[styles.emptyTitle, { color: colors.textSecondary }]}>{t('empty.noResults')}</Text>
+      <Text style={[styles.emptySub, { color: colors.textTertiary }]}>{t('empty.trySuggestion')}</Text>
     </View>
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.searchBar, { backgroundColor: colors.surfaceSecondary, borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={onCancelSearch} accessibilityLabel="Back" style={styles.iconBtn}>
           <Ionicons name="arrow-back" size={22} color={colors.iconPrimary} />
@@ -53,7 +56,7 @@ export const CurrencyList: React.FC<Props> = ({
           style={[styles.input, { color: colors.textPrimary }]}
           value={query}
           onChangeText={onQueryChange}
-          placeholder="Search"
+          placeholder={t('search.placeholder')}
           placeholderTextColor={colors.textTertiary}
           autoFocus
           returnKeyType="search"
@@ -71,18 +74,17 @@ export const CurrencyList: React.FC<Props> = ({
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.borderLight }]}>
-        <FlatList
-          data={items}
-          renderItem={renderItem}
-          keyExtractor={(i) => i.id}
-          ListEmptyComponent={<Empty />}
-          ItemSeparatorComponent={() => <View style={[styles.sep, { backgroundColor: colors.separator }]} />}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={items.length === 0 ? { flex: 1 } : undefined}
-        />
-      </View>
-    </View>
+      <FlatList
+        data={items}
+        renderItem={renderItem}
+        keyExtractor={(i) => i.id}
+        ListEmptyComponent={<Empty />}
+        ItemSeparatorComponent={() => <View style={[styles.sep, { backgroundColor: colors.separator }]} />}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={items.length === 0 ? styles.emptyList : undefined}
+        showsVerticalScrollIndicator={false}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -91,33 +93,44 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  iconBtn: { padding: 6 },
+  iconBtn: { 
+    padding: 8,
+    marginHorizontal: 4,
+  },
   input: {
     flex: 1,
-    marginHorizontal: 12,
-    paddingVertical: Platform.OS === 'ios' ? 8 : 4,
-    fontSize: 18,
-  },
-  card: {
-    flex: 1,
-    margin: 12,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-    borderWidth: 1,
+    marginHorizontal: 8,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 6,
+    fontSize: 16,
+    fontWeight: '500',
   },
   sep: {
     height: StyleSheet.hairlineWidth,
     marginLeft: 66,
   },
-  empty: { alignItems: 'center', justifyContent: 'center', flex: 1 },
-  emptyTitle: { marginTop: 16, fontSize: 18, fontWeight: '600' },
-  emptySub: { marginTop: 4, fontSize: 14 },
+  empty: { 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+  },
+  emptyTitle: { 
+    marginTop: 16, 
+    fontSize: 18, 
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  emptySub: { 
+    marginTop: 8, 
+    fontSize: 14,
+    textAlign: 'center',
+    opacity: 0.8,
+  },
+  emptyList: {
+    flex: 1,
+  },
 });

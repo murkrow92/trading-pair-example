@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { CurrencyList } from '../types';
 import { CURRENCY_LIST_A_CRYPTO, CURRENCY_LIST_B_FIAT } from '../mock/currencies';
-import { initDb, clearAll, insertList, getByList, getPurchasableFromAandB } from '../db/currencyDb';
+import { initDb, clearAll, insertList, getByList, getPurchasableFromAandB, recreateTable } from '../db/currencyDb';
 import { matchesSearch } from '../utils/search';
 
 type Mode = 'A' | 'B' | 'ALL';
@@ -103,8 +103,13 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const insertMockA = async () => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
+      console.log('Inserting Mock A data...');
+      await recreateTable(); // Force recreate table with new schema
       await insertList('A', CURRENCY_LIST_A_CRYPTO);
+      console.log('Mock A data inserted successfully');
       await loadForMode(state.mode);
+    } catch (error) {
+      console.error('Error inserting Mock A:', error);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -113,8 +118,12 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const insertMockB = async () => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
+      console.log('Inserting Mock B data...');
       await insertList('B', CURRENCY_LIST_B_FIAT);
+      console.log('Mock B data inserted successfully');
       await loadForMode(state.mode);
+    } catch (error) {
+      console.error('Error inserting Mock B:', error);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }

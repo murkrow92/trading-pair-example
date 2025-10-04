@@ -1,0 +1,76 @@
+{
+  "app": {
+    "title": "Ứng dụng Crypto",
+    "subtitle": "Demo với Dark Theme, Tích hợp API & Quản lý State"
+  },
+  "dataSource": {
+    "title": "Nguồn dữ liệu",
+    "mockData": "Dữ liệu Mock",
+    "liveApi": "API Trực tiếp"
+  },
+  "database": {
+    "title": "Điều khiển Database",
+    "clearDb": "Xóa DB",
+    "insertData": "Thêm dữ liệu"
+  },
+  "dataMode": {
+    "title": "Chế độ dữ liệu",
+    "crypto": "Crypto (A)",
+    "fiat": "Fiat (B)",
+    "all": "Tất cả (A+B)",
+    "favorites": "Yêu thích"
+  },
+  "loading": {
+    "text": "Đang tải dữ liệu...",
+    "cryptocurrencies": "Đang tải cryptocurrencies..."
+  },
+  "empty": {
+    "noResults": "Không có kết quả",
+    "trySuggestion": "Thử 'MCO'",
+    "noFavorites": "Chưa có yêu thích",
+    "addFavoritesHint": "Nhấn ❤️ trên các currency để thêm vào yêu thích",
+    "noCryptocurrencies": "Không có Cryptocurrencies",
+    "pullToRefresh": "Kéo để làm mới hoặc kiểm tra kết nối",
+    "insertDataHint": "Nhấn \"Thêm dữ liệu\" để tải currencies"
+  },
+  "search": {
+    "placeholder": "Tìm kiếm currencies...",
+    "tapToSearch": "Nhấn để tìm kiếm",
+    "cancel": "Hủy"
+  },
+  "crypto": {
+    "topCryptocurrencies": "Top Cryptocurrencies",
+    "currenciesCount": "{{count}} currencies • Nhấn ❤️ để yêu thích",
+    "failedToLoad": "Không thể tải dữ liệu",
+    "somethingWentWrong": "Đã xảy ra lỗi",
+    "tryAgain": "Thử lại"
+  },
+  "errors": {
+    "networkError": "Lỗi mạng",
+    "serverError": "Lỗi server",
+    "unknownError": "Đã xảy ra lỗi không xác định"
+  },
+  "currencies": {
+    "bitcoin": "Bitcoin",
+    "ethereum": "Ethereum",
+    "xrp": "XRP",
+    "bitcoinCash": "Bitcoin Cash",
+    "litecoin": "Litecoin",
+    "eos": "EOS",
+    "binanceCoin": "Binance Coin",
+    "chainlink": "Chainlink",
+    "neo": "NEO",
+    "ethereumClassic": "Ethereum Classic",
+    "ontology": "Ontology",
+    "cryptoComChain": "Crypto.com Chain",
+    "cucumber": "Cucumber",
+    "usdCoin": "USD Coin",
+    "singaporeDollar": "Đô la Singapore",
+    "euro": "Euro",
+    "britishPound": "Bảng Anh",
+    "hongKongDollar": "Đô la Hong Kong",
+    "japaneseYen": "Yên Nhật",
+    "australianDollar": "Đô la Úc",
+    "unitedStatesDollar": "Đô la Mỹ"
+  }
+}

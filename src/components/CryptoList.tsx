@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
@@ -14,13 +15,16 @@ import { useTopCryptocurrencies } from '../hooks/useCryptoQueries';
 import { useCurrencyStore } from '../store/currencyStore';
 import { CurrencyItem } from './CurrencyItem';
 import { CurrencyInfo } from '../types';
+import { useI18n } from '../hooks/useI18n';
 
 interface CryptoListProps {
   onItemPress?: (item: CurrencyInfo) => void;
+  onBackPress?: () => void;
 }
 
-export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress }) => {
+export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress, onBackPress }) => {
   const { colors } = useTheme();
+  const { t } = useI18n();
   const { 
     data: cryptocurrencies, 
     isLoading, 
@@ -63,34 +67,22 @@ export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress }) => {
   };
 
   const renderItem = ({ item }: { item: CurrencyInfo }) => (
-    <View style={styles.itemContainer}>
-      <CurrencyItem 
-        item={item} 
-        onPress={handleItemPress}
-        showChevron={false}
-      />
-      <TouchableOpacity
-        style={styles.favoriteButton}
-        onPress={() => handleFavoritePress(item)}
-        activeOpacity={0.7}
-      >
-        <Ionicons
-          name={isFavorite(item.id) ? 'heart' : 'heart-outline'}
-          size={24}
-          color={isFavorite(item.id) ? colors.error : colors.iconSecondary}
-        />
-      </TouchableOpacity>
-    </View>
+    <CurrencyItem 
+      item={item} 
+      onPress={handleItemPress}
+      showChevron={false}
+      showFavorite={true}
+    />
   );
 
   const EmptyComponent = () => (
     <View style={styles.emptyContainer}>
       <Ionicons name="trending-up-outline" size={64} color={colors.textTertiary} />
       <Text style={[styles.emptyTitle, { color: colors.textSecondary }]}>
-        No Cryptocurrencies
+        {t('empty.noCryptocurrencies')}
       </Text>
       <Text style={[styles.emptySubtitle, { color: colors.textTertiary }]}>
-        Pull to refresh or check your connection
+        {t('empty.pullToRefresh')}
       </Text>
     </View>
   );
@@ -99,17 +91,17 @@ export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress }) => {
     <View style={styles.errorContainer}>
       <Ionicons name="alert-circle-outline" size={64} color={colors.error} />
       <Text style={[styles.errorTitle, { color: colors.textSecondary }]}>
-        Failed to Load Data
+        {t('crypto.failedToLoad')}
       </Text>
       <Text style={[styles.errorSubtitle, { color: colors.textTertiary }]}>
-        {error?.message || 'Something went wrong'}
+        {error?.message || t('crypto.somethingWentWrong')}
       </Text>
       <TouchableOpacity
         style={[styles.retryButton, { backgroundColor: colors.surfaceSecondary }]}
         onPress={() => refetch()}
       >
         <Text style={[styles.retryButtonText, { color: colors.textPrimary }]}>
-          Try Again
+          {t('crypto.tryAgain')}
         </Text>
       </TouchableOpacity>
     </View>
@@ -120,7 +112,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress }) => {
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.iconPrimary} />
         <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-          Loading cryptocurrencies...
+          {t('loading.cryptocurrencies')}
         </Text>
       </View>
     );
@@ -133,14 +125,27 @@ export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress }) => {
   const data = cryptocurrencies || [];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surfaceSecondary }]}>
-        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Top Cryptocurrencies
-        </Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
-          {data.length} currencies • Tap ❤️ to favorite
-        </Text>
+        <View style={styles.headerContent}>
+          {onBackPress && (
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={onBackPress}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+            </TouchableOpacity>
+          )}
+          <View style={styles.headerText}>
+            <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>
+              {t('crypto.topCryptocurrencies')}
+            </Text>
+            <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]} numberOfLines={1}>
+              {t('crypto.currenciesCount', { count: data.length })}
+            </Text>
+          </View>
+        </View>
       </View>
 
       <FlatList
@@ -162,7 +167,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ onItemPress }) => {
         )}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -173,25 +178,30 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    marginTop: 2,
-  },
-  itemContainer: {
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
   },
-  favoriteButton: {
+  backButton: {
     padding: 8,
-    marginLeft: 8,
+    marginRight: 8,
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    flexShrink: 1,
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    marginTop: 2,
+    flexShrink: 1,
+    opacity: 0.8,
   },
   separator: {
     height: StyleSheet.hairlineWidth,

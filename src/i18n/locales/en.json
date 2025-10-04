@@ -1,0 +1,76 @@
+{
+  "app": {
+    "title": "Crypto App",
+    "subtitle": "Demo with Dark Theme, API Integration & State Management"
+  },
+  "dataSource": {
+    "title": "Data Source",
+    "mockData": "Mock Data",
+    "liveApi": "Live API"
+  },
+  "database": {
+    "title": "Database Controls",
+    "clearDb": "Clear DB",
+    "insertData": "Insert Data"
+  },
+  "dataMode": {
+    "title": "Data Mode",
+    "crypto": "Crypto (A)",
+    "fiat": "Fiat (B)",
+    "all": "All (A+B)",
+    "favorites": "Favorites"
+  },
+  "loading": {
+    "text": "Loading data...",
+    "cryptocurrencies": "Loading cryptocurrencies..."
+  },
+  "empty": {
+    "noResults": "No Results",
+    "trySuggestion": "Try 'MCO'",
+    "noFavorites": "No favorites yet",
+    "addFavoritesHint": "Tap ❤️ on currencies to add them to favorites",
+    "noCryptocurrencies": "No Cryptocurrencies",
+    "pullToRefresh": "Pull to refresh or check your connection",
+    "insertDataHint": "Tap \"Insert Data\" to load currencies"
+  },
+  "search": {
+    "placeholder": "Search currencies...",
+    "tapToSearch": "Tap to search",
+    "cancel": "Cancel"
+  },
+  "crypto": {
+    "topCryptocurrencies": "Top Cryptocurrencies",
+    "currenciesCount": "{{count}} currencies • Tap ❤️ to favorite",
+    "failedToLoad": "Failed to Load Data",
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try Again"
+  },
+  "errors": {
+    "networkError": "Network error",
+    "serverError": "Server error",
+    "unknownError": "Unknown error occurred"
+  },
+  "currencies": {
+    "bitcoin": "Bitcoin",
+    "ethereum": "Ethereum",
+    "xrp": "XRP",
+    "bitcoinCash": "Bitcoin Cash",
+    "litecoin": "Litecoin",
+    "eos": "EOS",
+    "binanceCoin": "Binance Coin",
+    "chainlink": "Chainlink",
+    "neo": "NEO",
+    "ethereumClassic": "Ethereum Classic",
+    "ontology": "Ontology",
+    "cryptoComChain": "Crypto.com Chain",
+    "cucumber": "Cucumber",
+    "usdCoin": "USD Coin",
+    "singaporeDollar": "Singapore Dollar",
+    "euro": "Euro",
+    "britishPound": "British Pound",
+    "hongKongDollar": "Hong Kong Dollar",
+    "japaneseYen": "Japanese Yen",
+    "australianDollar": "Australian Dollar",
+    "unitedStatesDollar": "United States Dollar"
+  }
+}
