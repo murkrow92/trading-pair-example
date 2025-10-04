@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 import type { SQLiteDatabase } from 'expo-sqlite';
-import { CurrencyList } from '../types';
+import { CurrencyList, CurrencyInfo } from '../types';
 
 const DB_NAME = 'currencies.db';
 const TABLE = 'currencies';
@@ -29,10 +29,10 @@ export async function insertList(listName: 'A' | 'B', items: CurrencyList): Prom
   const db = getDb();
   await initDb();
   await db.withTransactionAsync(async () => {
-    for (const it of items) {
+    for (const item of items) {
       await db.runAsync(
         `INSERT OR REPLACE INTO ${TABLE}(id,name,symbol,code,list) VALUES (?,?,?,?,?)`,
-        [it.id, it.name, it.symbol, it.code ?? null, listName],
+        [item.id, item.name, item.symbol, item.code ?? null, listName],
       );
     }
   });

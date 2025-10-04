@@ -79,7 +79,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       setInitialized(true);
       await loadForMode(state.mode);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
 
   useEffect(() => {

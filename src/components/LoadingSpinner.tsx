@@ -1,4 +1,4 @@
-// UI Layer - Loading component
+
 import React from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 

@@ -1,9 +1,12 @@
-// Data models and type definitions
 export interface CurrencyInfo {
-  id: string; // db primary key from server
-  name: string; // display name of the currency
-  symbol: string; // display symbol
-  code?: string; // fiat currency code, ISO 4217
+  id: string;
+  name: string;
+  symbol: string;
+  code?: string;
+  imageUrl?: string;
+  price?: number;
+  change24h?: number;
+  marketCap?: number;
 }
 
 export type CurrencyList = CurrencyInfo[];

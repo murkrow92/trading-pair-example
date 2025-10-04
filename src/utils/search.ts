@@ -4,7 +4,7 @@ export function normalize(input: string): string {
   return (input || '').toLowerCase();
 }
 
-// Matches per spec
+
 export function matchesSearch(term: string, item: CurrencyInfo): boolean {
   if (!term) return true;
   const q = normalize(term);
