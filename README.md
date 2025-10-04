@@ -1,6 +1,10 @@
 # Crypto Mobile App
 
-A React Native mobile application for cryptocurrency management built with Expo, featuring dark theme, favorites management, and real-time API integration.
+A React Native mobile application for cryptocurrency management built with Expo, featuring dark theme, favorites
+management, and real-time API integration.
+
+![Screenshot 2025-10-04 at 16.15.24.png](assets/Screenshot%202025-10-04%20at%2016.15.24.png)
+![Screenshot 2025-10-04 at 16.15.29.png](assets/Screenshot%202025-10-04%20at%2016.15.29.png)
 
 ## 🚀 Key Features
 
@@ -33,17 +37,20 @@ A React Native mobile application for cryptocurrency management built with Expo,
 ## 🔧 Installation
 
 ### 1. Clone repository
+
 ```bash
 git clone <repository-url>
 cd crypto-mobile-app
 ```
 
 ### 2. Install dependencies
+
 ```bash
 pnpm install
 ```
 
 ### 3. Run the application
+
 ```bash
 # Start Expo development server
 pnpm start
@@ -57,29 +64,34 @@ pnpm web     # Web
 ## 📱 Usage
 
 ### Main Screens
+
 - **Demo Screen**: Display currencies list from mock data
 - **Live API**: Show real-time data from CoinGecko API
 - **Search**: Search currencies by name or symbol
 - **Favorites**: View and manage favorite currencies
 
 ### Search Functionality
+
 - Search by currency name (e.g., "Bitcoin", "bit")
 - Search by symbol (e.g., "BTC", "btc")
 - Case-insensitive search
 - Supports partial keyword matching
 
 ### Favorites Management
+
 - Tap ❤️ icon to add/remove favorites
 - View favorites list in dedicated tab
 - Favorites are persisted across app restarts
 
 ### Theme Switching
+
 - Tap theme icon to toggle dark/light mode
 - Theme preference is saved and restored on app restart
 
 ## 🧪 Testing
 
 ### Run Tests
+
 ```bash
 # Run all tests
 pnpm test
@@ -92,6 +104,7 @@ pnpm test --watch
 ```
 
 ### Test Structure
+
 ```
 __tests__/
 ├── search-typescript.test.ts      # Search logic tests
@@ -126,17 +139,21 @@ src/
 ## 🔧 Configuration
 
 ### Environment Variables
+
 Create `.env` file in root directory:
+
 ```env
 EXPO_PUBLIC_API_URL=https://api.coingecko.com/api/v3
 ```
 
 ### Database
+
 - SQLite database is automatically created on startup
 - Schema migration is handled automatically
 - Database file: `currency.db`
 
 ### API Configuration
+
 - **CoinGecko API**: Default endpoint for live data
 - **Rate limiting**: Handled automatically
 - **Caching**: React Query cache for 5 minutes
@@ -144,6 +161,7 @@ EXPO_PUBLIC_API_URL=https://api.coingecko.com/api/v3
 ## 🚀 Build and Deploy
 
 ### Development Build
+
 ```bash
 # iOS
 expo build:ios
@@ -153,6 +171,7 @@ expo build:android
 ```
 
 ### Production Build
+
 ```bash
 # EAS Build (recommended)
 eas build --platform all
@@ -189,6 +208,7 @@ expo build:android --type apk
    ```
 
 ### Performance Issues
+
 - Use React Query DevTools to debug caching
 - Check memory usage with Flipper
 - Optimize images with expo-image
@@ -196,16 +216,19 @@ expo build:android --type apk
 ## 📚 API Reference
 
 ### Services
+
 - `DatabaseService`: Manage database operations
 - `SearchService`: Handle search logic
 - `FavoritesService`: Manage favorites
 
 ### Hooks
+
 - `useCryptoQueries`: React Query hooks for API calls
 - `useI18n`: Internationalization hook
 - `useTheme`: Theme management hook
 
 ### Stores
+
 - `useAppStore`: Main application state
 - `useThemeStore`: Theme state management
 
