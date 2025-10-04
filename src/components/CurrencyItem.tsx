@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import type { CurrencyInfo } from '../types';
 import { useTheme } from '../theme/ThemeProvider';
 import { CurrencyImage } from './CurrencyImage';
-import { useCurrencyStore } from '../store/currencyStore';
+import { useAppStore } from '../store/appStore';
 
 interface Props {
   item: CurrencyInfo;
@@ -20,7 +20,7 @@ export const CurrencyItem: React.FC<Props> = ({
   showFavorite = false,
 }) => {
   const { colors } = useTheme();
-  const { favorites, toggleFavorite, isFavorite } = useCurrencyStore();
+  const { isFavorite, toggleFavorite } = useAppStore();
 
   const handleFavoritePress = () => {
     toggleFavorite(item.id);
@@ -41,12 +41,12 @@ export const CurrencyItem: React.FC<Props> = ({
           </Text>
         </View>
         <View style={styles.rightCol}>
-          {item.price && (
+          {item.price !== undefined && item.price !== null && (
             <Text style={[styles.price, { color: colors.textPrimary }]}>
               ${item.price.toLocaleString()}
             </Text>
           )}
-          {item.change24h && (
+          {item.change24h !== undefined && item.change24h !== null && (
             <Text
               style={[
                 styles.change,

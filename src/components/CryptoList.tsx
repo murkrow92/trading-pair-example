@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.1)',
   },
   headerContent: {
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   separator: {
-    height: StyleSheet.hairlineWidth,
+    height: 1,
     marginLeft: 66,
   },
   loadingContainer: {

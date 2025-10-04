@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import './src/i18n';
-import { CurrencyProvider } from './src/contexts/CryptoContext';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import { QueryProvider } from './src/providers/QueryProvider';
 import { AppNavigator } from './src/navigation/AppNavigator';
+import { initializeApp } from './src/store/appStore';
 
 const AppContent = () => {
   const { isDark } = useTheme();
-  
+
+  useEffect(() => {
+    initializeApp();
+  }, []);
+
   return (
     <>
       <AppNavigator />
@@ -21,9 +25,7 @@ export default function App() {
   return (
     <QueryProvider>
       <ThemeProvider>
-        <CurrencyProvider>
-          <AppContent />
-        </CurrencyProvider>
+        <AppContent />
       </ThemeProvider>
     </QueryProvider>
   );

@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 1,
   },
   iconBtn: { 
     padding: 8,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   sep: {
-    height: StyleSheet.hairlineWidth,
+    height: 1,
     marginLeft: 66,
   },
   empty: { 

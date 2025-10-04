@@ -23,7 +23,6 @@ function getDb(): SQLiteDatabase {
 export async function initDb(): Promise<void> {
   const db = getDb();
   
-  // First create the basic table if it doesn't exist
   await db.execAsync(`CREATE TABLE IF NOT EXISTS ${TABLE} (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -32,29 +31,24 @@ export async function initDb(): Promise<void> {
     list TEXT NOT NULL
   )`);
   
-  // Check if new columns exist and add them if they don't
   try {
     await db.execAsync(`ALTER TABLE ${TABLE} ADD COLUMN image_url TEXT`);
   } catch (error) {
-    // Column already exists, ignore error
   }
   
   try {
     await db.execAsync(`ALTER TABLE ${TABLE} ADD COLUMN price REAL`);
   } catch (error) {
-    // Column already exists, ignore error
   }
   
   try {
     await db.execAsync(`ALTER TABLE ${TABLE} ADD COLUMN change_24h REAL`);
   } catch (error) {
-    // Column already exists, ignore error
   }
   
   try {
     await db.execAsync(`ALTER TABLE ${TABLE} ADD COLUMN market_cap REAL`);
   } catch (error) {
-    // Column already exists, ignore error
   }
 }
 
